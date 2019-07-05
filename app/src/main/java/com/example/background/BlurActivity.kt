@@ -46,13 +46,18 @@ class BlurActivity : AppCompatActivity() {
         viewModel = ViewModelProviders.of(this).get(BlurViewModel::class.java)
 
         // Image uri should be stored in the ViewModel, because when the activity is destroyed,
-        // the uri will still be there. Put it there then display the image.
+        // the uri will still be there in ViewModel. Put it there then display the image.
         val imageUriExtra = intent.getStringExtra(KEY_IMAGE_URI)
         viewModel.setImageUri(imageUriExtra)
         viewModel.imageUri?.let { imageUri ->
             Glide.with(this).load(imageUri).into(imageView)
         }
 
+        setOnClickListeners()
+    }
+
+    private fun setOnClickListeners() {
+        goButton.setOnClickListener { viewModel.applyBlur(blurLevel) }
     }
 
     private fun bindResources() {
