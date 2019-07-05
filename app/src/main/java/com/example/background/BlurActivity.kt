@@ -16,14 +16,14 @@
 
 package com.example.background
 
-import androidx.lifecycle.ViewModelProviders
 import android.os.Bundle
-import androidx.appcompat.app.AppCompatActivity
 import android.view.View
 import android.widget.Button
 import android.widget.ImageView
 import android.widget.ProgressBar
 import android.widget.RadioGroup
+import androidx.appcompat.app.AppCompatActivity
+import androidx.lifecycle.ViewModelProviders
 import com.bumptech.glide.Glide
 
 
@@ -45,7 +45,8 @@ class BlurActivity : AppCompatActivity() {
         // Get the ViewModel
         viewModel = ViewModelProviders.of(this).get(BlurViewModel::class.java)
 
-        // Image uri should be stored in the ViewModel; put it there then display
+        // Image uri should be stored in the ViewModel, because when the activity is destroyed,
+        // the uri will still be there. Put it there then display the image.
         val imageUriExtra = intent.getStringExtra(KEY_IMAGE_URI)
         viewModel.setImageUri(imageUriExtra)
         viewModel.imageUri?.let { imageUri ->

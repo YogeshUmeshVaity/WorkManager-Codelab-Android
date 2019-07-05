@@ -38,3 +38,18 @@ const val KEY_IMAGE_URI = "KEY_IMAGE_URI"
 const val TAG_OUTPUT = "OUTPUT"
 
 const val DELAY_TIME_MILLIS: Long = 3000
+
+/**
+ * Extension property for TAG in any class
+ * usage: Log.e(TAG,"some value")
+ */
+val Any.TAG: String
+    get() {
+        return if (!javaClass.isAnonymousClass) {
+            val name = javaClass.simpleName
+            if (name.length <= 23) name else name.substring(0, 23)// first 23 chars
+        } else {
+            val name = javaClass.name
+            if (name.length <= 23) name else name.substring(name.length - 23, name.length)// last 23 chars
+        }
+    }
