@@ -17,12 +17,13 @@
 package com.example.background
 
 import android.net.Uri
-import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.work.Data
 import androidx.work.OneTimeWorkRequestBuilder
 import androidx.work.WorkManager
 import com.example.background.workers.BlurWorker
+import com.example.background.workers.CleanupWorker
+import com.example.background.workers.SaveImageToFileWorker
 
 
 class BlurViewModel : ViewModel() {
@@ -32,12 +33,23 @@ class BlurViewModel : ViewModel() {
     private val workManager = WorkManager.getInstance()
 
     internal fun applyBlur(blurLevel: Int) {
-        val blurWorkRequest = OneTimeWorkRequestBuilder<BlurWorker>()
-                .setInputData(createInputDataForURI())
-                .build()
+        val cleanupRequest = OneTimeWorkRequestBuilder<CleanupWorker>().build()
+        var continuation = workManager.beginWith(cleanupRequest)
 
-        workManager.enqueue(blurWorkRequest)
-        Log.d(TAG, "applyBlur() called")
+        for(i in 0 until blurLevel) {
+            val blurBuilder = OneTimeWorkRequestBuilder<BlurWorker>()
+
+            // set input data only for the first operation. After the first blur operation the
+            // input will be the output of previous blur operations.
+            if(i == 0) {
+                blurBuilder.setInputData(createInputDataForURI())
+            }
+
+            continuation = continuation.then(blurBuilder.build())
+        }
+
+        val saveRequest = OneTimeWorkRequestBuilder<SaveImageToFileWorker>().build()
+        continuation.then(saveRequest).enqueue()
     }
 
     private fun uriOrNull(uriString: String?): Uri? {

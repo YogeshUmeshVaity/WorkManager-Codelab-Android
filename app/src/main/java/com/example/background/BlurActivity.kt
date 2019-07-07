@@ -17,7 +17,6 @@
 package com.example.background
 
 import android.os.Bundle
-import android.util.Log
 import android.view.View
 import android.widget.Button
 import android.widget.ImageView
@@ -60,7 +59,6 @@ class BlurActivity : AppCompatActivity() {
     private fun setOnClickListeners() {
         goButton.setOnClickListener {
             viewModel.applyBlur(blurLevel)
-            Log.d(TAG, "Go button click listener called")
         }
     }
 
