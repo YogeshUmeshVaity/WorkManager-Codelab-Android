@@ -8,6 +8,9 @@ import com.example.background.OUTPUT_PATH
 import com.example.background.TAG
 import java.io.File
 
+/**
+ * Cleans up temporary files generated during blurring process
+ */
 class CleanupWorker(ctx: Context, params: WorkerParameters) : Worker(ctx, params) {
     override fun doWork(): Result {
         // Makes a notification when the work starts and slows down the work so that
