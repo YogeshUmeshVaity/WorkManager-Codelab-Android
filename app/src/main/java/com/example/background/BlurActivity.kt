@@ -23,7 +23,9 @@ import android.widget.ImageView
 import android.widget.ProgressBar
 import android.widget.RadioGroup
 import androidx.appcompat.app.AppCompatActivity
+import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
+import androidx.work.WorkInfo
 import com.bumptech.glide.Glide
 
 
@@ -36,6 +38,15 @@ class BlurActivity : AppCompatActivity() {
     private lateinit var outputButton: Button
     private lateinit var cancelButton: Button
     private lateinit var radioGroup: RadioGroup
+
+    private val blurLevel: Int
+        get() =
+            when (radioGroup.checkedRadioButtonId) {
+                R.id.radio_blur_lv_1 -> 1
+                R.id.radio_blur_lv_2 -> 2
+                R.id.radio_blur_lv_3 -> 3
+                else -> 1
+            }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -54,6 +65,23 @@ class BlurActivity : AppCompatActivity() {
         }
 
         setOnClickListeners()
+
+        viewModel.outputWorkInfos.observe(this, workInfosObserver())
+    }
+
+    private fun workInfosObserver(): Observer<List<WorkInfo>> {
+        return Observer { workInfoList ->
+            if(workInfoList.isNullOrEmpty()) {
+                return@Observer
+            }
+
+            val workInfo = workInfoList[0]
+            if(workInfo.state.isFinished) {
+                showWorkFinished()
+            } else {
+                showWorkInProgress()
+            }
+        }
     }
 
     private fun setOnClickListeners() {
@@ -89,13 +117,4 @@ class BlurActivity : AppCompatActivity() {
         cancelButton.visibility = View.GONE
         goButton.visibility = View.VISIBLE
     }
-
-    private val blurLevel: Int
-        get() =
-            when (radioGroup.checkedRadioButtonId) {
-                R.id.radio_blur_lv_1 -> 1
-                R.id.radio_blur_lv_2 -> 2
-                R.id.radio_blur_lv_3 -> 3
-                else -> 1
-            }
 }
