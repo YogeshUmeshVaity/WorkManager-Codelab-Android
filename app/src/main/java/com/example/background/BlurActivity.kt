@@ -16,6 +16,7 @@
 
 package com.example.background
 
+import android.content.Intent
 import android.os.Bundle
 import android.view.View
 import android.widget.Button
@@ -74,13 +75,22 @@ class BlurActivity : AppCompatActivity() {
             if(workInfoList.isNullOrEmpty()) {
                 return@Observer
             }
-
-            val workInfo = workInfoList[0]
+            val workInfo:WorkInfo = workInfoList[0]
             if(workInfo.state.isFinished) {
                 showWorkFinished()
+                processOutputDataAndEnableSeeFileButton(workInfo)
             } else {
                 showWorkInProgress()
             }
+        }
+    }
+
+    private fun processOutputDataAndEnableSeeFileButton(workInfo: WorkInfo) {
+        val outputData = workInfo.outputData
+        val outputUri = outputData.getString(KEY_IMAGE_URI)
+        if (!outputUri.isNullOrEmpty()) {
+            viewModel.setOutputUri(outputUri)
+            outputButton.visibility = View.VISIBLE
         }
     }
 
@@ -88,6 +98,29 @@ class BlurActivity : AppCompatActivity() {
         goButton.setOnClickListener {
             viewModel.applyBlur(blurLevel)
         }
+
+        outputButton.setOnClickListener {
+            viewModel.outputUri?.let { currentUri ->
+                // This is how you view image on the Activity of some other app
+                val actionView = Intent(Intent.ACTION_VIEW, currentUri)
+                actionView.resolveActivity(packageManager)?.run {
+                    startActivity(actionView)
+                }
+            }
+        }
+
+        /**
+         * This looks like a better code than the code above. Commented it for future reference.
+         */
+//        outputButton.setOnClickListener {
+//            viewModel.outputUri?.let { currentUri ->
+//                val intent = Intent(Intent.ACTION_VIEW, currentUri)
+//                // Name of the component implementing an activity that can display this intent.
+//                val componentName = intent.resolveActivity(packageManager)
+//                // Check whether the component that can display this intent exists (not null).
+//                if(componentName != null) startActivity(intent)
+//            }
+//        }
     }
 
     private fun bindResources() {
