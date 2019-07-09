@@ -78,6 +78,8 @@ class BlurActivity : AppCompatActivity() {
             val workInfo:WorkInfo = workInfoList[0]
             if(workInfo.state.isFinished) {
                 showWorkFinished()
+                // Normally this processing, which is not directly related to drawing views on
+                // screen would be in the ViewModel. For simplicity we are keeping it here.
                 processOutputDataAndEnableSeeFileButton(workInfo)
             } else {
                 showWorkInProgress()
