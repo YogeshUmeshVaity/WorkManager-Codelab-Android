@@ -82,6 +82,10 @@ class BlurViewModel : ViewModel() {
         return dataBuilder.build()
     }
 
+    internal fun cancelWork() {
+        workManager.cancelUniqueWork(IMAGE_MANIPULATION_WORK_NAME)
+    }
+
     /**
      * Setters
      */

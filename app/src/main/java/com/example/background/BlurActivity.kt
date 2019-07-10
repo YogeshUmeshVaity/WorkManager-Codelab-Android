@@ -36,7 +36,7 @@ class BlurActivity : AppCompatActivity() {
     private lateinit var imageView: ImageView
     private lateinit var progressBar: ProgressBar
     private lateinit var goButton: Button
-    private lateinit var outputButton: Button
+    private lateinit var seeFileButton: Button
     private lateinit var cancelButton: Button
     private lateinit var radioGroup: RadioGroup
 
@@ -92,7 +92,7 @@ class BlurActivity : AppCompatActivity() {
         val outputUri = outputData.getString(KEY_IMAGE_URI)
         if (!outputUri.isNullOrEmpty()) {
             viewModel.setOutputUri(outputUri)
-            outputButton.visibility = View.VISIBLE
+            seeFileButton.visibility = View.VISIBLE
         }
     }
 
@@ -101,7 +101,7 @@ class BlurActivity : AppCompatActivity() {
             viewModel.applyBlur(blurLevel)
         }
 
-        outputButton.setOnClickListener {
+        seeFileButton.setOnClickListener {
             viewModel.outputUri?.let { currentUri ->
                 // This is how you view image on the Activity of some other app
                 val actionView = Intent(Intent.ACTION_VIEW, currentUri)
@@ -114,7 +114,7 @@ class BlurActivity : AppCompatActivity() {
         /**
          * This looks like a better code than the code above. Commented it for future reference.
          */
-//        outputButton.setOnClickListener {
+//        seeFileButton.setOnClickListener {
 //            viewModel.outputUri?.let { currentUri ->
 //                val intent = Intent(Intent.ACTION_VIEW, currentUri)
 //                // Name of the component implementing an activity that can display this intent.
@@ -123,13 +123,15 @@ class BlurActivity : AppCompatActivity() {
 //                if(componentName != null) startActivity(intent)
 //            }
 //        }
+
+        cancelButton.setOnClickListener { viewModel.cancelWork() }
     }
 
     private fun bindResources() {
         imageView = findViewById(R.id.image_view)
         progressBar = findViewById(R.id.progress_bar)
         goButton = findViewById(R.id.go_button)
-        outputButton = findViewById(R.id.see_file_button)
+        seeFileButton = findViewById(R.id.see_file_button)
         cancelButton = findViewById(R.id.cancel_button)
         radioGroup = findViewById(R.id.radio_blur_group)
     }
@@ -141,7 +143,7 @@ class BlurActivity : AppCompatActivity() {
         progressBar.visibility = View.VISIBLE
         cancelButton.visibility = View.VISIBLE
         goButton.visibility = View.GONE
-        outputButton.visibility = View.GONE
+        seeFileButton.visibility = View.GONE
     }
 
     /**
